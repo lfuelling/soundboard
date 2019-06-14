@@ -1,0 +1,31 @@
+# Soundboard
+
+## Features:
+- Scan a predefined folder for new sounds on each startup
+- Import sample files manually
+- Samples consist of:
+    - Filename
+    - Sample name
+- Activities:
+    - Soundboard
+    - Settings
+    - Sample Import (Can receive media intent)
+- File formats:
+    - mp3
+    - wav
+    - ogg
+- Settings:
+    - Search for sounds automatically (in predefined folder)
+    - Rename samples (should open the sample settings)
+    - Single or Multi playback mode
+        - Single stops playback when pressing another/the same button
+        - Multi plays sound simultaneously (is this even possible?)
+- Press and hold a trigger button to edit the sample
+- Press and hold a trigger button to enter "move" mode, where buttons can be rearranged (optional, maybe in the future)
+- Trigger a random sound after a given time (annoying bug mode)
+    - Samples that will be chosen from should be selectable
+    - Minimum of one (the same sound played at random intervals)
+- Free
+- Open Source
+- No Ads
+- No Trackers
