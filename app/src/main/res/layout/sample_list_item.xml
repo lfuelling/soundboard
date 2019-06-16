@@ -9,7 +9,7 @@
         android:id="@+id/playBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_play_circle_outline_black_48dp"
+        android:src="@drawable/ic_play_circle_outline_white_48dp"
         android:background="#00000000"
         android:soundEffectsEnabled="false"
         android:layout_margin="@dimen/default_margin"
@@ -23,6 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/playBtn"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

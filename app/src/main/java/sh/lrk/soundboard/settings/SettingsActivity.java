@@ -22,10 +22,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public static final String KEY_TEXT_SIZE = "text_size";
     public static final String KEY_STOP_PLAY = "stop_on_play_other";
     public static final String KEY_PLAY_IMMEDIATELY = "play_immediately";
+    public static final String KEY_NUM_COLS = "num_cols";
 
     public static final String DEFAULT_TEXT_SIZE = "2";
     public static final boolean DEFAULT_STOP_PLAY = true;
     public static final boolean DEFAULT_PLAY_IMMEDIATELY = true;
+    public static final String DEFAULT_NUM_COLS = "4";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

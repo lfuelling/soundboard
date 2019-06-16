@@ -2,12 +2,12 @@
 
     <header
         android:fragment="sh.lrk.soundboard.settings.SettingsActivity$CustomizationPreferenceFragment"
-        android:icon="@drawable/ic_color_lens_black_24dp"
+        android:icon="@drawable/ic_color_lens_white_24dp"
         android:title="@string/pref_header_customization" />
 
     <header
         android:fragment="sh.lrk.soundboard.settings.SettingsActivity$AdvancedPreferenceFragment"
-        android:icon="@drawable/ic_bug_report_black_24dp"
+        android:icon="@drawable/ic_bug_report_white_24dp"
         android:title="@string/pref_header_advanced" />
 
 </preference-headers>

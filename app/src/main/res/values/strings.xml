@@ -6,7 +6,7 @@
     <string name="pref_header_customization">Customization</string>
     <string name="cancel">Cancel</string>
     <string name="okay">Ok</string>
-    <string name="pref_description_text_size">Set the text size for the sample names.</string>
+    <string name="pref_description_text_size">Set the text size for sample names on the main screen.</string>
     <string name="pref_title_text_size">Text Size</string>
     <string name="pref_description_nothing_here">There is nothing here.</string>
     <string name="pref_title_nothing_here">Whoops!</string>
@@ -20,6 +20,8 @@
     <string name="pref_title_stop_on_play_other">Stop currently playing sound</string>
     <string name="pref_description_stop_on_play_other">Stops the currently playing sample when the user tries to play another one.</string>
     <string name="settings">Settings</string>
+    <string name="pref_title_num_cols">Number of columns</string>
+    <string name="pref_description_num_cols">Set the number of columns on the main screen.</string>
 
     <string-array name="pref_text_size_titles">
         <item>Small</item>

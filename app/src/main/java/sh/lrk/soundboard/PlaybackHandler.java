@@ -55,7 +55,7 @@ class PlaybackHandler {
         } catch (IOException e) {
             Log.e(TAG, "Error setting data source!", e);
             player.reset();
-            currentlyPlaying.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_outline_black_48dp));
+            currentlyPlaying.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_outline_white_48dp));
             playing = false;
         }
     }
@@ -65,7 +65,7 @@ class PlaybackHandler {
         player.reset();
         playing = false;
         if (currentlyPlaying != null) {
-            currentlyPlaying.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_outline_black_48dp));
+            currentlyPlaying.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_outline_white_48dp));
             currentlyPlaying = null;
         }
     }
@@ -75,7 +75,7 @@ class PlaybackHandler {
             player.setOnCompletionListener(mp -> {
                 mp.reset();
                 playing = false;
-                currentlyPlaying.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_outline_black_48dp));
+                currentlyPlaying.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_outline_white_48dp));
             });
 
             player.prepare();
@@ -83,7 +83,7 @@ class PlaybackHandler {
         } catch (IOException e) {
             Log.e(TAG, "Error playing media!", e);
             player.reset();
-            currentlyPlaying.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_outline_black_48dp));
+            currentlyPlaying.setImageDrawable(context.getDrawable(R.drawable.ic_play_circle_outline_white_48dp));
             playing = false;
         }
     }

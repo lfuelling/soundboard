@@ -36,6 +36,9 @@ import java.util.Set;
 
 import sh.lrk.soundboard.settings.SettingsActivity;
 
+import static sh.lrk.soundboard.settings.SettingsActivity.DEFAULT_NUM_COLS;
+import static sh.lrk.soundboard.settings.SettingsActivity.KEY_NUM_COLS;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getCanonicalName();
@@ -48,13 +51,14 @@ public class MainActivity extends AppCompatActivity {
     private HashMap<String, String> soundboardData;
     private SharedPreferences preferences;
     private SampleAdapter adapter;
+    private GridView gridView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        GridView gridView = findViewById(R.id.sampleListView);
+        gridView = findViewById(R.id.sampleListView);
         FloatingActionButton fab = findViewById(R.id.addBtn);
 
         adapter = new SampleAdapter(this);
@@ -77,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
         initAdapter();
         gridView.setAdapter(adapter);
 
+        applyNumColsPreference();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                     checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -84,6 +90,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    private void applyNumColsPreference() {
+        String numColsPreference = preferences.getString(KEY_NUM_COLS, DEFAULT_NUM_COLS);
+        if(numColsPreference == null) { // 👀
+            numColsPreference = DEFAULT_NUM_COLS;
+        }
+        gridView.setNumColumns(Integer.parseInt(numColsPreference));
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        applyNumColsPreference();
     }
 
     @Override
