@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="default_margin">8dp</dimen>
-    <dimen name="prompt_margin">8dp</dimen>
-    <dimen name="file_view_margin">16dp</dimen>
+    <dimen name="large_margin">16dp</dimen>
+    <dimen name="larger_margin">24dp</dimen>
 </resources>

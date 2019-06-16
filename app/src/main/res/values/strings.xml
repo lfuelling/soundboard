@@ -25,6 +25,11 @@
     <string name="edit_sample">Edit</string>
     <string name="sample_does_not_exist">Sample doesn\'t exist!</string>
     <string name="invalid_sample_name">Invalid name!</string>
+    <string name="find_sounds">Find Sounds</string>
+    <string name="diag_title_find_sounds">@string/find_sounds</string>
+    <string name="diag_message_find_sounds">You can find all the sounds you need online.\n\nJust enter something like \'soundboard sounds wav free download\' into a search engine of your choice.\n\nAfter downloading the file, you can use the add button to add a sample.</string>
+    <string name="invalid_num_cols_value">Value has to be between 0 and 8!</string>
+    <string name="reset">Reset</string>
 
     <string-array name="pref_text_size_titles">
         <item>Small</item>

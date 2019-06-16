@@ -8,9 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="@dimen/prompt_margin"
-        android:layout_marginTop="@dimen/file_view_margin"
-        android:layout_marginEnd="@dimen/prompt_margin"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/large_margin"
+        android:layout_marginEnd="@dimen/default_margin"
         android:text="@string/path_input_hint" />
 
     <EditText
@@ -18,9 +18,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/nameTextView"
-        android:layout_marginStart="@dimen/prompt_margin"
-        android:layout_marginEnd="@dimen/prompt_margin"
-        android:layout_marginBottom="@dimen/file_view_margin"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/large_margin"
         android:inputType="textNoSuggestions" />
 
 </RelativeLayout>

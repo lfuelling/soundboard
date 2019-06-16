@@ -117,9 +117,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.settings) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
+        } else if(itemId == R.id.findSounds) {
+            new AlertDialog.Builder(this)
+                    .setNeutralButton(R.string.okay, (d,w) -> d.dismiss())
+                    .setTitle(R.string.diag_title_find_sounds)
+                    .setMessage(R.string.diag_message_find_sounds)
+                    .setIcon(R.drawable.ic_help_outline_white_24dp)
+                    .create().show();
         }
         return false;
     }

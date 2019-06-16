@@ -1,15 +1,28 @@
 package sh.lrk.soundboard.settings;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -28,6 +41,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public static final boolean DEFAULT_STOP_PLAY = true;
     public static final boolean DEFAULT_PLAY_IMMEDIATELY = true;
     public static final String DEFAULT_NUM_COLS = "4";
+    public static final int MIN_NUM_COLS = 1;
+    public static final int MAX_NUM_COLS = 8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +94,72 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_customization);
             setHasOptionsMenu(true);
+
+            Preference numColsPreference = findPreference(KEY_NUM_COLS);
+            numColsPreference.setOnPreferenceClickListener(p -> {
+                showNumColsDialog();
+                return true;
+            });
+        }
+
+        @SuppressLint("CutPasteId")
+        private void showNumColsDialog() {
+            AlertDialog dia = new AlertDialog.Builder(getActivity())
+                    .setView(R.layout.num_col_prompt)
+                    .setNegativeButton(R.string.cancel, (dialog, which) -> Log.d(TAG, "Change canceled."))
+                    .create();
+
+            dia.setOnShowListener(dialog -> {
+                String numColsString = getPreferenceManager().getSharedPreferences().getString(KEY_NUM_COLS, DEFAULT_NUM_COLS);
+                if (numColsString == null) {
+                    numColsString = DEFAULT_NUM_COLS;
+                }
+                SeekBar seekBar = dia.findViewById(R.id.numColsSeekBar);
+                TextView valueTextView = dia.findViewById(R.id.numColsValueTextView);
+
+                seekBar.setProgress(Integer.parseInt(numColsString));
+                valueTextView.setText(numColsString);
+                seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        valueTextView.setText(String.valueOf(progress));
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                    }
+                });
+
+            });
+
+            dia.setButton(AlertDialog.BUTTON_NEUTRAL, getActivity().getText(R.string.reset), (d, w) -> {
+                SeekBar numColsSeekBar = dia.findViewById(R.id.numColsSeekBar);
+                numColsSeekBar.setProgress(Integer.parseInt(DEFAULT_NUM_COLS));
+                getPreferenceManager().getSharedPreferences().edit()
+                        .putString(KEY_NUM_COLS, DEFAULT_NUM_COLS)
+                        .apply();
+            });
+
+            dia.setButton(AlertDialog.BUTTON_POSITIVE, getActivity().getText(R.string.okay), (d, w) -> {
+                SeekBar numColsSeekBar = dia.findViewById(R.id.numColsSeekBar);
+                int value = numColsSeekBar.getProgress();
+
+                if (value >= MIN_NUM_COLS && value <= MAX_NUM_COLS) {
+                    getPreferenceManager().getSharedPreferences().edit()
+                            .putString(KEY_NUM_COLS, String.valueOf(value))
+                            .apply();
+                } else if (value < MIN_NUM_COLS) {
+                    getPreferenceManager().getSharedPreferences().edit()
+                            .putString(KEY_NUM_COLS, String.valueOf(MIN_NUM_COLS))
+                            .apply();
+                }
+            });
+
+            dia.show();
         }
 
         @Override
@@ -105,7 +186,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             playImmediately.setEnabled(stopPlayback.isChecked());
 
-            stopPlayback.setOnPreferenceChangeListener((p,n) -> {
+            stopPlayback.setOnPreferenceChangeListener((p, n) -> {
                 playImmediately.setEnabled((Boolean) n);
                 return true;
             });

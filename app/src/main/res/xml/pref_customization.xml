@@ -12,9 +12,7 @@
             android:summary="@string/pref_description_text_size"
             android:title="@string/pref_title_text_size" />
 
-        <EditTextPreference
-            android:inputType="number"
-            android:defaultValue="4"
+        <Preference
             android:key="num_cols"
             android:summary="@string/pref_description_num_cols"
             android:title="@string/pref_title_num_cols" />

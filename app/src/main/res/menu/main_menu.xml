@@ -4,6 +4,10 @@
     tools:context="sh.lrk.soundboard.MainActivity">
     <item
         android:id="@+id/settings"
-        android:icon="@drawable/ic_settings_black_24dp"
+        android:icon="@drawable/ic_settings_white_24dp"
         android:title="@string/settings" />
+    <item
+        android:id="@+id/findSounds"
+        android:icon="@drawable/ic_help_outline_white_24dp"
+        android:title="@string/find_sounds" />
 </menu>
