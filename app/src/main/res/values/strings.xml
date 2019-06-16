@@ -14,6 +14,12 @@
     <string name="select_an_audio_file">Select an audio file</string>
     <string name="file_does_not_exist">File does not exist!</string>
     <string name="no_selection_made">No selection was made!</string>
+    <string name="delete_sample">Delete Sample</string>
+    <string name="pref_title_play_immediately">Play Immediately</string>
+    <string name="pref_description_play_immediately">Starts a sample immediately while another is still playing.</string>
+    <string name="pref_title_stop_on_play_other">Stop currently playing sound</string>
+    <string name="pref_description_stop_on_play_other">Stops the currently playing sample when the user tries to play another one.</string>
+    <string name="settings">Settings</string>
 
     <string-array name="pref_text_size_titles">
         <item>Small</item>

@@ -10,6 +10,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.GridView;
 
@@ -30,6 +33,8 @@ import java.io.InputStream;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
+
+import sh.lrk.soundboard.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,6 +84,22 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+        return false;
     }
 
     private void initAdapter() {
@@ -145,27 +166,25 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
             Uri selectedFile = data.getData(); //The uri with the location of the file
             if (selectedFile != null) {
-                if (selectedFile.getScheme() != null && !selectedFile.getScheme().contains("file")) {
-                    File file = new File(selectedFile.getPath());
-                    AlertDialog dia = new AlertDialog.Builder(this)
-                            .setView(R.layout.add_prompt)
-                            .setNegativeButton(R.string.cancel, (dialog, which) -> Log.d(TAG, "Adding canceled."))
-                            .create();
+                File file = new File(FilePathResolver.getPath(this, selectedFile));
+                AlertDialog dia = new AlertDialog.Builder(this)
+                        .setView(R.layout.add_prompt)
+                        .setNegativeButton(R.string.cancel, (dialog, which) -> Log.d(TAG, "Adding canceled."))
+                        .create();
 
-                    dia.setButton(AlertDialog.BUTTON_POSITIVE, getText(R.string.okay), (d, w) -> {
-                        EditText sampleName = dia.findViewById(R.id.sampleName);
-                        String name = sampleName.getText().toString();
-                        if (name.isEmpty()) {
-                            name = getString(R.string.unnamed_sample);
-                        }
-                        soundboardData.put(name, file.getPath());
-                        saveSoundboardData();
-                        adapter.clear();
-                        initAdapter();
-                    });
+                dia.setButton(AlertDialog.BUTTON_POSITIVE, getText(R.string.okay), (d, w) -> {
+                    EditText sampleName = dia.findViewById(R.id.sampleName);
+                    String name = sampleName.getText().toString();
+                    if (name.isEmpty()) {
+                        name = getString(R.string.unnamed_sample);
+                    }
+                    soundboardData.put(name, file.getAbsolutePath());
+                    saveSoundboardData();
+                    adapter.clear();
+                    initAdapter();
+                });
 
-                    dia.show();
-                }
+                dia.show();
             } else {
                 Snackbar.make(getWindow().getDecorView(),
                         getText(R.string.no_selection_made),
@@ -176,5 +195,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveSoundboardData() {
         preferences.edit().putString(KEY_SOUNDBOARD_DATA, new Gson().toJson(soundboardData)).apply();
+    }
+
+    public void removeFromSamples(SoundboardSample sample) {
+        soundboardData.remove(sample.getName());
+        saveSoundboardData();
+        initAdapter();
     }
 }

@@ -2,9 +2,17 @@
 
     <PreferenceCategory android:title="@string/pref_header_advanced">
 
-        <Preference
-            android:summary="@string/pref_description_nothing_here"
-            android:title="@string/pref_title_nothing_here" />
+        <SwitchPreference
+            android:key="stop_on_play_other"
+            android:defaultValue="true"
+            android:title="@string/pref_title_stop_on_play_other"
+            android:summary="@string/pref_description_stop_on_play_other" />
+
+        <SwitchPreference
+            android:key="play_immediately"
+            android:defaultValue="true"
+            android:title="@string/pref_title_play_immediately"
+            android:summary="@string/pref_description_play_immediately" />
 
     </PreferenceCategory>
 

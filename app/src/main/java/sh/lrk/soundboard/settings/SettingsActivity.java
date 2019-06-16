@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.ActionBar;
@@ -19,8 +20,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public static final String TAG = SettingsActivity.class.getCanonicalName();
 
     public static final String KEY_TEXT_SIZE = "text_size";
+    public static final String KEY_STOP_PLAY = "stop_on_play_other";
+    public static final String KEY_PLAY_IMMEDIATELY = "play_immediately";
 
     public static final String DEFAULT_TEXT_SIZE = "2";
+    public static final boolean DEFAULT_STOP_PLAY = true;
+    public static final boolean DEFAULT_PLAY_IMMEDIATELY = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +97,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_advanced);
             setHasOptionsMenu(true);
+
+            SwitchPreference stopPlayback = (SwitchPreference) findPreference(KEY_STOP_PLAY);
+            SwitchPreference playImmediately = (SwitchPreference) findPreference(KEY_PLAY_IMMEDIATELY);
+
+            playImmediately.setEnabled(stopPlayback.isChecked());
+
+            stopPlayback.setOnPreferenceChangeListener((p,n) -> {
+                playImmediately.setEnabled((Boolean) n);
+                return true;
+            });
         }
 
         @Override

@@ -1,8 +1,12 @@
 package sh.lrk.soundboard;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -10,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 import static sh.lrk.soundboard.settings.SettingsActivity.DEFAULT_TEXT_SIZE;
 import static sh.lrk.soundboard.settings.SettingsActivity.KEY_TEXT_SIZE;
@@ -17,8 +22,9 @@ import static sh.lrk.soundboard.settings.SettingsActivity.KEY_TEXT_SIZE;
 class SampleAdapter extends ArrayAdapter<SoundboardSample> {
 
     private static final int ITEM_VIEW = R.layout.sample_list_item;
+    private static final int ID_DELETE = 0;
 
-    SampleAdapter(Context context) {
+    SampleAdapter(MainActivity context) {
         super(context, ITEM_VIEW);
     }
 
@@ -42,7 +48,16 @@ class SampleAdapter extends ArrayAdapter<SoundboardSample> {
             setTextSize(sampleName);
             sampleName.setText(item.getName());
 
-            playBtn.setOnClickListener(v -> PlaybackHandler.getInstance().play(item.getFile()));
+            playBtn.setOnClickListener(v -> PlaybackHandler.getInstance().play(item.getFile(), playBtn, getContext()));
+            playBtn.setOnCreateContextMenuListener((m,v,i) -> {
+                m.setHeaderTitle(item.getName());
+                MenuItem deleteSampleItem = m.add(0, ID_DELETE, 0, R.string.delete_sample);
+                deleteSampleItem.setOnMenuItemClickListener(menuItem -> {
+                    ((MainActivity) getContext()).removeFromSamples(item);
+                    return true;
+                });
+                deleteSampleItem.setEnabled(item.getName().equals("Hit") || item.getName().equals("It Just Works"));
+            });
         }
 
         return view;
