@@ -1,14 +1,180 @@
 package sh.lrk.soundboard;
 
-import android.support.v7.app.AppCompatActivity;
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.widget.EditText;
+import android.widget.GridView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.common.io.ByteStreams;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = MainActivity.class.getCanonicalName();
+
+    public static final String KEY_SOUNDBOARD_DATA = "soundboard_data";
+    public static final String DEFAULT_SOUNDBOARD_DATA = "{}";
+    public static final int REQUEST_CODE = 696;
+    public static final String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+    private HashMap<String, String> soundboardData;
+    private SharedPreferences preferences;
+    private SampleAdapter adapter;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        GridView gridView = findViewById(R.id.sampleListView);
+        FloatingActionButton fab = findViewById(R.id.addBtn);
+
+        adapter = new SampleAdapter(this);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        soundboardData = new Gson()
+                .fromJson(preferences.getString(KEY_SOUNDBOARD_DATA, DEFAULT_SOUNDBOARD_DATA),
+                        new TypeToken<HashMap<String, String>>() {
+                        }.getType());
+
+        fab.setOnClickListener(v -> {
+            Intent intent = new Intent()
+                    .setType("audio/*")
+                    .setAction(Intent.ACTION_OPEN_DOCUMENT);
+
+            startActivityForResult(Intent.createChooser(intent,
+                    getText(R.string.select_an_audio_file)), REQUEST_CODE);
+        });
+
+        addInititalSamples();
+        initAdapter();
+        gridView.setAdapter(adapter);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_CODE);
+            }
+        }
+
+    }
+
+    private void initAdapter() {
+        Set<String> sampleNames = soundboardData.keySet();
+        for (String name : sampleNames) {
+            adapter.add(new SoundboardSample(new File(soundboardData.get(name)), name));
+        }
+        adapter.sort((a, b) -> a.getName().compareTo(b.getName())); // sort by name
+    }
+
+    private void addInititalSamples() {
+        String hitPath = soundboardData.get("Hit");
+        if (hitPath == null || !new File(hitPath).exists()) {
+            createHitSampleTempFile();
+        }
+
+        String ijwPath = soundboardData.get("It Just Works");
+        if (ijwPath == null || !new File(ijwPath).exists()) {
+            createIJWSampleTempFile();
+        }
+    }
+
+    private void createIJWSampleTempFile() {
+        try {
+            File file = File.createTempFile("ijw", "wav", getCacheDir());
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                InputStream in = getResources().openRawResource(R.raw.ijw);
+                ByteStreams.copy(in, out);
+                out.flush();
+                in.close();
+
+                soundboardData.put("It Just Works", file.getPath());
+                saveSoundboardData();
+            } catch (IOException e) {
+                Log.w(TAG, "Unable to write tmp file!", e);
+            }
+        } catch (IOException e) {
+            Log.w(TAG, "Unable to create tmp file!", e);
+        }
+    }
+
+    private void createHitSampleTempFile() {
+        try {
+            File file = File.createTempFile("hit", "wav", getCacheDir());
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                InputStream in = getResources().openRawResource(R.raw.hit);
+                ByteStreams.copy(in, out);
+                out.flush();
+                in.close();
+
+                soundboardData.put("Hit", file.getPath());
+                saveSoundboardData();
+            } catch (IOException e) {
+                Log.w(TAG, "Unable to write tmp file!", e);
+            }
+        } catch (IOException e) {
+            Log.w(TAG, "Unable to create tmp file!", e);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            Uri selectedFile = data.getData(); //The uri with the location of the file
+            if (selectedFile != null) {
+                if (selectedFile.getScheme() != null && !selectedFile.getScheme().contains("file")) {
+                    File file = new File(selectedFile.getPath());
+                    AlertDialog dia = new AlertDialog.Builder(this)
+                            .setView(R.layout.add_prompt)
+                            .setNegativeButton(R.string.cancel, (dialog, which) -> Log.d(TAG, "Adding canceled."))
+                            .create();
+
+                    dia.setButton(AlertDialog.BUTTON_POSITIVE, getText(R.string.okay), (d, w) -> {
+                        EditText sampleName = dia.findViewById(R.id.sampleName);
+                        String name = sampleName.getText().toString();
+                        if (name.isEmpty()) {
+                            name = getString(R.string.unnamed_sample);
+                        }
+                        soundboardData.put(name, file.getPath());
+                        saveSoundboardData();
+                        adapter.clear();
+                        initAdapter();
+                    });
+
+                    dia.show();
+                }
+            } else {
+                Snackbar.make(getWindow().getDecorView(),
+                        getText(R.string.no_selection_made),
+                        Snackbar.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void saveSoundboardData() {
+        preferences.edit().putString(KEY_SOUNDBOARD_DATA, new Gson().toJson(soundboardData)).apply();
     }
 }

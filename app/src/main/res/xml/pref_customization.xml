@@ -1,0 +1,17 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_header_customization">
+
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/pref_text_size_titles"
+            android:entryValues="@array/pref_text_size_values"
+            android:key="launcher_text_size"
+            android:negativeButtonText="@string/cancel"
+            android:positiveButtonText="@string/okay"
+            android:summary="@string/pref_description_text_size"
+            android:title="@string/pref_title_text_size" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
