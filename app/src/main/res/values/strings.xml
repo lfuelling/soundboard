@@ -22,6 +22,9 @@
     <string name="settings">Settings</string>
     <string name="pref_title_num_cols">Number of columns</string>
     <string name="pref_description_num_cols">Set the number of columns on the main screen.</string>
+    <string name="edit_sample">Edit</string>
+    <string name="sample_does_not_exist">Sample doesn\'t exist!</string>
+    <string name="invalid_sample_name">Invalid name!</string>
 
     <string-array name="pref_text_size_titles">
         <item>Small</item>

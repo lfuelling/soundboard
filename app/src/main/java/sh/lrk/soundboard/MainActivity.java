@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.GridView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -30,7 +31,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getCanonicalName();
 
+    public static final String IT_JUST_WORKS = "It Just Works";
+    public static final String HIT = "Hit";
     public static final String KEY_SOUNDBOARD_DATA = "soundboard_data";
     public static final String DEFAULT_SOUNDBOARD_DATA = "{}";
     public static final int REQUEST_CODE = 696;
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void applyNumColsPreference() {
         String numColsPreference = preferences.getString(KEY_NUM_COLS, DEFAULT_NUM_COLS);
-        if(numColsPreference == null) { // 👀
+        if (numColsPreference == null) { // 👀
             numColsPreference = DEFAULT_NUM_COLS;
         }
         gridView.setNumColumns(Integer.parseInt(numColsPreference));
@@ -115,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.settings) {
+        if (item.getItemId() == R.id.settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
@@ -123,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initAdapter() {
+        adapter.clear();
         Set<String> sampleNames = soundboardData.keySet();
         for (String name : sampleNames) {
             adapter.add(new SoundboardSample(new File(soundboardData.get(name)), name));
@@ -131,12 +134,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addInititalSamples() {
-        String hitPath = soundboardData.get("Hit");
+        String hitPath = soundboardData.get(HIT);
         if (hitPath == null || !new File(hitPath).exists()) {
             createHitSampleTempFile();
         }
 
-        String ijwPath = soundboardData.get("It Just Works");
+        String ijwPath = soundboardData.get(IT_JUST_WORKS);
         if (ijwPath == null || !new File(ijwPath).exists()) {
             createIJWSampleTempFile();
         }
@@ -151,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
                 out.flush();
                 in.close();
 
-                soundboardData.put("It Just Works", file.getPath());
+                soundboardData.put(IT_JUST_WORKS, file.getPath());
                 saveSoundboardData();
             } catch (IOException e) {
                 Log.w(TAG, "Unable to write tmp file!", e);
@@ -170,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 out.flush();
                 in.close();
 
-                soundboardData.put("Hit", file.getPath());
+                soundboardData.put(HIT, file.getPath());
                 saveSoundboardData();
             } catch (IOException e) {
                 Log.w(TAG, "Unable to write tmp file!", e);
@@ -200,7 +203,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                     soundboardData.put(name, file.getAbsolutePath());
                     saveSoundboardData();
-                    adapter.clear();
                     initAdapter();
                 });
 
@@ -219,6 +221,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void removeFromSamples(SoundboardSample sample) {
         soundboardData.remove(sample.getName());
+        saveSoundboardData();
+        initAdapter();
+    }
+
+    public void editSample(String sampleName, @NonNull String newName) {
+        String samplePath = soundboardData.get(sampleName);
+
+        if (samplePath == null) {
+            Snackbar.make(getWindow().getDecorView(), R.string.sample_does_not_exist, Snackbar.LENGTH_LONG).show();
+            return;
+        }
+
+        if (newName.isEmpty()) {
+            Snackbar.make(getWindow().getDecorView(), R.string.invalid_sample_name, Snackbar.LENGTH_LONG).show();
+            return;
+        }
+
+        soundboardData.remove(sampleName);
+        soundboardData.put(newName, samplePath);
         saveSoundboardData();
         initAdapter();
     }
