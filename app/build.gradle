@@ -31,7 +31,7 @@ android {
 }
 
 dependencies {
-    api 'com.google.guava:guava:28.0-android'
+    api 'com.google.guava:guava:28.1-android'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0-beta01'
     implementation 'com.google.android.material:material:1.1.0-alpha07'
